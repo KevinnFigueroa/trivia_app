@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:trivia_app/controllers/backend_controller.dart';
 import 'package:trivia_app/services/auth.dart';
+import 'package:trivia_app/services/pages/game.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -31,37 +32,171 @@ class _HomeState extends State<Home> {
       children: [
         SizedBox(height: 100),
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20),
+          padding: const EdgeInsets.only(right: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton.extended(
+                onPressed: () {
+                  changePage(0);
+                },
+                heroTag: null,
+                icon: Icon(FontAwesomeIcons.arrowLeft),
+                label: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "Volver",
+                    style: GoogleFonts.ubuntu(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+                backgroundColor: HexColor("#4285f4"),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0),
           child: Container(
             child: Column(
               children: [
+                separator,
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    FloatingActionButton.extended(
-                      onPressed: () {
-                        changePage(0);
-                      },
-                      heroTag: null,
-                      icon: Icon(FontAwesomeIcons.arrowLeft),
-                      label: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "Volver",
+                    Text(
+                      "Juegos",
+                      style: GoogleFonts.ubuntu(
+                        textStyle: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 30,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text(
+                      "Selecciona un juego",
+                      style: GoogleFonts.ubuntu(
+                        textStyle: TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        separator,
+        Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Row(
+            children: [
+              Expanded(
+                child: MaterialButton(
+                  height: 70,
+                  onPressed: () {},
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Definiciones",
                           style: GoogleFonts.ubuntu(
                             textStyle: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
                               letterSpacing: 1,
                             ),
                           ),
                         ),
-                      ),
-                      backgroundColor: HexColor("#4285f4"),
-                    )
-                  ],
+                      ],
+                    ),
+                  ),
+                  color: Colors.pink.withOpacity(0.5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
                 ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                child: MaterialButton(
+                  height: 70,
+                  onPressed: () {},
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Anagramas",
+                          style: GoogleFonts.ubuntu(
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  color: HexColor("#4285f4"),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                ),
+              ),
+              SizedBox(width: 5),
+              Expanded(
+                  child: MaterialButton(
+                height: 70,
+                onPressed: () {},
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Capicúas",
+                        style: GoogleFonts.ubuntu(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                color: HexColor("#4285f4"),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+              )),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: Container(
+            child: Column(
+              children: [
                 separator,
                 Row(
                   children: [
@@ -78,7 +213,7 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-                separator,
+                SizedBox(height: 5),
                 Row(
                   children: [
                     Text(
@@ -104,8 +239,103 @@ class _HomeState extends State<Home> {
           child: Padding(
             padding: const EdgeInsets.all(25),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: MaterialButton(
+                        height: 40,
+                        onPressed: () {},
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Fácil",
+                                style: GoogleFonts.ubuntu(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        color: Colors.pink.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: MaterialButton(
+                        height: 40,
+                        onPressed: () {},
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Intermedio",
+                                style: GoogleFonts.ubuntu(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        color: HexColor("#4285f4"),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: MaterialButton(
+                        height: 40,
+                        onPressed: () {},
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Difícil",
+                                style: GoogleFonts.ubuntu(
+                                  textStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        color: HexColor("#4285f4"),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 35, right: 35),
+                  child: Divider(
+                    height: 40,
+                    thickness: 0.5,
+                    color: Colors.grey,
+                  ),
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -126,7 +356,9 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                         ),
-                        onPressed: () async {},
+                        onPressed: () async {
+                          changePage(2);
+                        },
                       ),
                     ),
                   ],
@@ -277,7 +509,7 @@ class _HomeState extends State<Home> {
                         ),
                       ],
                     ),
-                    separator,
+                    SizedBox(height: 5),
                     Row(
                       children: [
                         Text(
@@ -538,7 +770,7 @@ class _HomeState extends State<Home> {
             ),
             PageView(
               controller: _pageController,
-              children: [_home(), _letsPlay()],
+              children: [_home(), _letsPlay(), Game()],
             )
           ],
         ),

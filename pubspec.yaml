@@ -35,7 +35,8 @@ dependencies:
   hexcolor: ^2.0.3
   flutter_custom_clippers: ^1.1.2
   flutter_signin_button: ^1.1.0
-  font_awesome_flutter: ^9.0.0
+  font_awesome_flutter: ^8.2.0
+  http:
 
 dev_dependencies:
   flutter_test:
