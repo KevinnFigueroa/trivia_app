@@ -15,14 +15,16 @@ class Game extends StatefulWidget {
   _GameState createState() => _GameState();
 }
 
+//TODO: agregar provider en el main
+
 class _GameState extends State<Game> {
   final separator = SizedBox(height: 15);
   int listOfWords;
   List<dynamic> words;
-  TextEditingController textEditingController;
+  TextEditingController textEditingController = TextEditingController();
   String currentWordEditing;
   int wordRoundLength;
-  bool _showInput = false;
+  //bool _showInput = false;
 
   Map roundResult;
   int corrects = 0;
@@ -35,24 +37,26 @@ class _GameState extends State<Game> {
 
   int countMarker = 30;
 
+  bool _startRound = false;
+
   @override
   void initState() {
     super.initState();
-    textEditingController = TextEditingController();
+    //textEditingController = TextEditingController();
   }
 
-  @override
+  /*@override
   void dispose() {
     // Clean up the controller when the widget is disposed.
+    super.dispose();
     textEditingController.dispose();
     _count?.cancel();
-    super.dispose();
-  }
+  }*/
 
   void timer() {
-    setState(() {
-      _showInput = true;
-    });
+    //setState(() {
+    //  _showInput = true;
+    //});
     initialWord();
     _count = Timer.periodic(Duration(seconds: 1), (timer) {
       if (countMarker == 0) {
@@ -77,6 +81,7 @@ class _GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
+    GameModel gameProvider = Provider.of<GameModel>(context, listen: false);
     return FutureBuilder(
       future: randomTrivia(),
       builder: (context, snapshot) {
@@ -248,54 +253,107 @@ class _GameState extends State<Game> {
                 ),
               ),
               separator,
-              Card(
-                margin: const EdgeInsets.all(15),
-                elevation: 10,
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Definición",
-                        style: GoogleFonts.ubuntu(
-                          textStyle: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 25,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        margin: const EdgeInsets.all(5),
-                        elevation: 5,
-                        color: HexColor("#4285f4"),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Presione jugar para comenzar a adivinar palabras",
-                                style: GoogleFonts.ubuntu(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
+              Consumer<GameModel>(builder: (context, value, child) {
+                if (value.stateRound) {
+                  return Card(
+                    margin: const EdgeInsets.all(15),
+                    elevation: 10,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Definición",
+                            style: GoogleFonts.ubuntu(
+                              textStyle: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25,
+                                letterSpacing: 1,
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          SizedBox(height: 10),
+                          Card(
+                            margin: const EdgeInsets.all(5),
+                            elevation: 5,
+                            color: HexColor("#4285f4"),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "${words[currentIndexRound]['definitions'][0]}",
+                                    style: GoogleFonts.ubuntu(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
+                  );
+                } else {
+                  return Card(
+                    margin: const EdgeInsets.all(15),
+                    elevation: 10,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Definición",
+                            style: GoogleFonts.ubuntu(
+                              textStyle: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Card(
+                            margin: const EdgeInsets.all(5),
+                            elevation: 5,
+                            color: HexColor("#4285f4"),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Presione jugar para comenzar a adivinar palabras",
+                                    style: GoogleFonts.ubuntu(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              }),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Divider(
@@ -304,6 +362,56 @@ class _GameState extends State<Game> {
                   color: Colors.grey[300],
                 ),
               ),
+              /*_startRound
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            PinCodeTextField(
+                              appContext: context,
+                              //cursorHeight: 60,
+                              //cursorWidth:
+                              //    MediaQuery.of(context).size.width / 1.2,
+                              length: wordRoundLength,
+                              obscureText: false,
+                              //TODO:
+                              //validator: ,
+                              animationType: AnimationType.fade,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(5),
+                                fieldHeight: 50,
+                                fieldWidth: 40,
+                                activeFillColor: Colors.white,
+                              ),
+                              animationDuration: Duration(milliseconds: 300),
+                              backgroundColor: Colors.blue.shade50,
+                              enableActiveFill: true,
+                              //errorAnimationController: errorController,
+                              controller: textEditingController,
+                              onCompleted: (v) {
+                                print("Completed");
+                                if (v == wordInRound) {
+                                  corrects += 1;
+                                } else {
+                                  incorrects += 1;
+                                }
+                              },
+                              onChanged: (value) {
+                                print(value);
+                                setState(() {
+                                  currentWordEditing = value;
+                                });
+                              },
+                              beforeTextPaste: (text) {
+                                print("Allowing to paste $text");
+                                //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                                //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                                return true;
+                              },
+                            )
+                          ],
+                        )
+                      : Container(),*/
               Card(
                 margin: const EdgeInsets.all(15),
                 elevation: 10,
@@ -312,79 +420,91 @@ class _GameState extends State<Game> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _showInput
-                              ? PinCodeTextField(
-                                  length: wordRoundLength,
-                                  obscureText: false,
-                                  animationType: AnimationType.fade,
-                                  pinTheme: PinTheme(
-                                    shape: PinCodeFieldShape.box,
-                                    borderRadius: BorderRadius.circular(5),
-                                    fieldHeight: 50,
-                                    fieldWidth: 40,
-                                    activeFillColor: Colors.white,
-                                  ),
-                                  animationDuration:
-                                      Duration(milliseconds: 300),
-                                  backgroundColor: Colors.blue.shade50,
-                                  enableActiveFill: true,
-                                  //errorAnimationController: errorController,
-                                  controller: textEditingController,
-                                  onCompleted: (v) {
-                                    print("Completed");
-                                    if (v == wordInRound) {
-                                      corrects += 1;
-                                    } else {
-                                      incorrects += 1;
-                                    }
-                                  },
-                                  onChanged: (value) {
-                                    print(value);
-                                    setState(() {
-                                      currentWordEditing = value;
-                                    });
-                                  },
-                                  beforeTextPaste: (text) {
-                                    print("Allowing to paste $text");
-                                    //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                                    //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                                    return true;
-                                  },
-                                )
-                              : Container()
-                        ],
-                      ),
                       separator,
-                      Row(
-                        children: [
-                          Expanded(
-                            child: MaterialButton(
-                              height: 50,
-                              color: HexColor("#4285f4"),
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Text(
-                                "Jugar",
-                                style: GoogleFonts.ubuntu(
-                                  textStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15,
-                                    letterSpacing: 0,
+                      Consumer<GameModel>(builder: (context, value, child) {
+                        if (value.stateRound) {
+                          print("ENTRE EN ROUND TRUE");
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: MaterialButton(
+                                  height: 50,
+                                  color: HexColor("#4285f4"),
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Text(
+                                    "Enviar respuesta",
+                                    style: GoogleFonts.ubuntu(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
                                   ),
+                                  onPressed: () {
+                                    //TODO: ver que hacer en la ultima palabra, llamar a Gamemodel().finishRound();
+
+                                    currentIndexRound += 1;
+                                    wordInRound = words[currentIndexRound]
+                                            ["word"]
+                                        .toString();
+                                    //setState(() {
+                                    wordRoundLength = words[currentIndexRound]
+                                            ["word"]
+                                        .toString()
+                                        .length;
+                                    //});
+                                    //timer();
+                                  },
                                 ),
                               ),
-                              onPressed: () {
-                                timer();
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                            ],
+                          );
+                        } else {
+                          print("ENTRE EN ROUND FALSE");
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: MaterialButton(
+                                  height: 50,
+                                  color: HexColor("#4285f4"),
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Text(
+                                    "Jugar",
+                                    style: GoogleFonts.ubuntu(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    //TODO: ver que hacer en la ultima palabra
+                                    wordInRound = words[currentIndexRound]
+                                            ["word"]
+                                        .toString();
+                                    //setState(() {
+                                    wordRoundLength = words[currentIndexRound]
+                                            ["word"]
+                                        .toString()
+                                        .length;
+                                    //});
+                                    gameProvider.startRound();
+                                    //timer();
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
                     ],
                   ),
                 ),
