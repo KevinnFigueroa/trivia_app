@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:trivia_app/controllers/backend_controller.dart';
+import 'package:trivia_app/models/game.dart';
 import 'package:trivia_app/services/auth.dart';
 import 'package:trivia_app/services/pages/game.dart';
 
@@ -727,8 +728,31 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _preparingDataToPlay() {
+    var words;
+    var listOfWords;
+    return FutureBuilder(
+      future: randomTrivia(),
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          print("${snapshot.data}");
+          words = snapshot.data;
+          listOfWords = words.length;
+          GameModel gameProvider =
+              Provider.of<GameModel>(context, listen: false);
+          gameProvider.initialData(listOfWords, words);
+          changePage(3);
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+//TODO: implementar en drawer
 /*MaterialButton(
           child: Text('Cerrar Sesión ${authService.user.displayName}'),
           onPressed: () {
@@ -770,7 +794,7 @@ class _HomeState extends State<Home> {
             ),
             PageView(
               controller: _pageController,
-              children: [_home(), _letsPlay(), Game()],
+              children: [_home(), _letsPlay(), _preparingDataToPlay(), Game()],
             )
           ],
         ),

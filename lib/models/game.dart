@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -12,21 +14,19 @@ class GameModel extends ChangeNotifier {
 
   bool stateRound = false;
 
-  void initialData(listOfWords) {
-    this.listOfWords = listOfWords;
+  var words;
+
+  void initialData(amountOfWords, wordsToAdivinate) {
+    listOfWords = amountOfWords;
+    words = wordsToAdivinate;
   }
 
-  void newWord(wordInRound, wordsInRoundLength, corrects, incorrects,
-      currentIndexRound) {
+  void newWord(wordInRound, wordsInRoundLength, corrects, incorrects) {
     this.wordInRound = wordInRound;
     this.wordsInRoundLength = wordsInRoundLength;
     this.corrects = corrects;
     this.incorrects = incorrects;
-    this.currentIndexRound = currentIndexRound;
 
-    if (currentIndexRound == listOfWords + 1) {
-      this.roundFinalizated = true;
-    }
     notifyListeners();
   }
 
@@ -37,6 +37,14 @@ class GameModel extends ChangeNotifier {
 
   void finishRound() {
     this.stateRound = false;
+    notifyListeners();
+  }
+
+  void changeWord() {
+    this.currentIndexRound += 1;
+    if (currentIndexRound == listOfWords + 1) {
+      this.roundFinalizated = true;
+    }
     notifyListeners();
   }
 }
